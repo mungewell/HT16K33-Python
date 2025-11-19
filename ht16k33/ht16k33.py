@@ -17,13 +17,14 @@ class HT16K33:
     HT16K33_GENERIC_SYSTEM_OFF = 0x20
     HT16K33_GENERIC_DISPLAY_ADDRESS = 0x00
     HT16K33_GENERIC_CMD_BRIGHTNESS = 0xE0
-    HT16K33_GENERIC_CMD_BLINK = 0x81
+    HT16K33_GENERIC_CMD_BLINK = 0x80
 
     # *********** PRIVATE PROPERTIES **********
 
     i2c = None
     address = 0
     brightness = 15
+    display_on = 1
     flash_rate = 0
 
     # *********** CONSTRUCTOR **********
@@ -45,10 +46,16 @@ class HT16K33:
         Args:
             rate (int): The chosen flash rate. Default: 0Hz (no flash).
         """
+        if rate < 0:
+            self.display_on = 0
+            rate = 0
+        else:
+            self.display_on = 1
+
         allowed_rates = (0, 2, 1, 0.5)
         assert rate in allowed_rates, "ERROR - Invalid blink rate set in set_blink_rate()"
         self.blink_rate = allowed_rates.index(rate) & 0x03
-        self._write_cmd(self.HT16K33_GENERIC_CMD_BLINK | self.blink_rate << 1)
+        self._write_cmd(self.HT16K33_GENERIC_CMD_BLINK | self.blink_rate << 1 | self.display_on)
 
     def set_brightness(self, brightness=15):
         """
