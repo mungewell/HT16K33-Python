@@ -47,7 +47,7 @@ class HT16K33:
             rate (int): The chosen flash rate. Default: 0Hz (no flash).
         """
         if rate < 0:
-            self.display_on = 0
+            self.display_on = not self.display_on
             rate = 0
         else:
             self.display_on = 1
@@ -101,11 +101,13 @@ class HT16K33:
         """
         self._write_cmd(self.HT16K33_GENERIC_SYSTEM_ON)
         self._write_cmd(self.HT16K33_GENERIC_DISPLAY_ON)
+        display_on = 1
 
     def power_off(self):
         """
         Power on the controller and display.
         """
+        display_on = 0
         self._write_cmd(self.HT16K33_GENERIC_DISPLAY_OFF)
         self._write_cmd(self.HT16K33_GENERIC_SYSTEM_OFF)
 
